@@ -4,5 +4,8 @@
   "main": "index.js",
   "repository": "https://github.com/Italo-J-A-Fernandes/codeDrops90.git",
   "author": "Italo Fernandes <italojafernandes@hotmail.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2"
+  }
 }
