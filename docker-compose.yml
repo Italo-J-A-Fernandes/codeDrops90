@@ -1,0 +1,15 @@
+version: "3.9"
+
+services:
+  database:
+    image: postgres
+    container_name: csv_db
+    restart: always
+    ports:
+      - 5432:5432
+    environment:
+      - POSTGRES_USER=pgcsv
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=csv
+    volumes:
+      - ./data/csvdata:/var/lib/postgresql/data
