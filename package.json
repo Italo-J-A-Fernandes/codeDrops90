@@ -5,6 +5,9 @@
   "repository": "https://github.com/Italo-J-A-Fernandes/codeDrops90.git",
   "author": "Italo Fernandes <italojafernandes@hotmail.com>",
   "license": "MIT",
+  "scripts": {
+    "dev": "ts-node-dev src/server.ts"
+  },
   "dependencies": {
     "@prisma/client": "^5.0.0",
     "express": "^4.18.2",
