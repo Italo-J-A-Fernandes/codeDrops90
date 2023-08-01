@@ -1,7 +1,7 @@
 import { Request, Response, Router } from "express";
 import { Readable } from "stream";
+import { client } from "./database/client";
 import readLine from "readline";
-
 import multer from "multer";
 
 const multerConfig = multer();
@@ -51,6 +51,8 @@ router.post(
         });
       }
     }
+
+    const productsDB = await client.products.findMany();
 
     return response.send();
   }
