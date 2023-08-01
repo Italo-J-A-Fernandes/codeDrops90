@@ -47,21 +47,33 @@ router.post(
       });
     }
 
-    for await (let { code_bar, description, price, quantity } of products) {
-      await client.products.create({
-        data: {
-          code_bar,
-          description,
-          price,
-          quantity,
-        },
-      });
-    }
+    // for await (let { code_bar, description, price, quantity } of products) {
+    //   await client.products.create({
+    //     data: {
+    //       code_bar,
+    //       description,
+    //       price,
+    //       quantity,
+    //     },
+    //   });
+    // }
 
-    return response.status(200).json({
-      message: "Arquivo enviado com sucesso!",
-      data: products,
-    });
+    await client.products
+      .createMany({
+        data: products,
+      })
+      .then(() => {
+        return response.status(200).json({
+          message: "Arquivo enviado com sucesso e os dados inseridos no banco.",
+          data: products,
+        });
+      })
+      .catch(() => {
+        return response.status(500).json({
+          message:
+            "Ocorreu um erro ao inserir os dados no banco, revise seu arquivo.",
+        });
+      });
   }
 );
 
