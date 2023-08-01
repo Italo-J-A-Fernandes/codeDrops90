@@ -1,9 +1,8 @@
-import { Request, Response, Router, request, response } from "express";
+import { Request, Response, Router } from "express";
 import { Readable } from "stream";
 import readLine from "readline";
 
 import multer from "multer";
-import { client } from "./database/client";
 
 const multerConfig = multer();
 const router = Router();
@@ -39,41 +38,21 @@ router.post(
     for await (let line of productsLine) {
       const productsLineSplit = line.split(",");
 
-      products.push({
-        code_bar: productsLineSplit[0],
-        description: productsLineSplit[1],
-        price: Number(productsLineSplit[2]),
-        quantity: Number(productsLineSplit[3]),
-      });
+      const exist = products.findIndex(
+        (prod) => prod.code_bar === productsLineSplit[0]
+      );
+
+      if (exist === -1) {
+        products.push({
+          code_bar: productsLineSplit[0],
+          description: productsLineSplit[1],
+          price: Number(productsLineSplit[2]),
+          quantity: Number(productsLineSplit[3]),
+        });
+      }
     }
 
-    // for await (let { code_bar, description, price, quantity } of products) {
-    //   await client.products.create({
-    //     data: {
-    //       code_bar,
-    //       description,
-    //       price,
-    //       quantity,
-    //     },
-    //   });
-    // }
-
-    await client.products
-      .createMany({
-        data: products,
-      })
-      .then(() => {
-        return response.status(200).json({
-          message: "Arquivo enviado com sucesso e os dados inseridos no banco.",
-          data: products,
-        });
-      })
-      .catch(() => {
-        return response.status(500).json({
-          message:
-            "Ocorreu um erro ao inserir os dados no banco, revise seu arquivo.",
-        });
-      });
+    return response.send();
   }
 );
 
