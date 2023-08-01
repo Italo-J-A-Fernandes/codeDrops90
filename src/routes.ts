@@ -3,6 +3,7 @@ import { Readable } from "stream";
 import readLine from "readline";
 
 import multer from "multer";
+import { client } from "./database/client";
 
 const multerConfig = multer();
 const router = Router();
@@ -46,7 +47,21 @@ router.post(
       });
     }
 
-    return response.send("Arquivo enviado com sucesso!");
+    for await (let { code_bar, description, price, quantity } of products) {
+      await client.products.create({
+        data: {
+          code_bar,
+          description,
+          price,
+          quantity,
+        },
+      });
+    }
+
+    return response.status(200).json({
+      message: "Arquivo enviado com sucesso!",
+      data: products,
+    });
   }
 );
 
