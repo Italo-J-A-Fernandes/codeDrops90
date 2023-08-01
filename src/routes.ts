@@ -1,5 +1,6 @@
 import { Request, Response, Router, request, response } from "express";
 import { Readable } from "stream";
+import readLine from "readline";
 
 import multer from "multer";
 
@@ -20,6 +21,10 @@ router.post(
     const readableFile = new Readable();
     readableFile.push(bufferFile);
     readableFile.push(null);
+
+    const productsLine = readLine.createInterface({
+      input: readableFile,
+    });
 
     return response.send("Arquivo enviado com sucesso!");
   }
