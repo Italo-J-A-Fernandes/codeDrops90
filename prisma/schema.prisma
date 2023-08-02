@@ -9,7 +9,7 @@ datasource db {
 
 model Products {
   id          String @id @default(uuid())
-  code_bar    String
+  code_bar    String @unique
   description String
   price       Float
   quantity    Int
