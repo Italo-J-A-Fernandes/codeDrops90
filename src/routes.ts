@@ -52,9 +52,28 @@ router.post(
       }
     }
 
-    const productsDB = await client.products.findMany();
-
-    return response.send();
+    await client.products
+      .createMany({
+        data: products,
+        skipDuplicates: true,
+      })
+      .then((resp) => {
+        console.log(resp);
+        if (resp.count === 0) {
+          return response.status(200).json({
+            message: "Os dados enviados já encontram-se registrados no banco.",
+          });
+        }
+        return response.status(200).json({
+          message: `${resp.count} cadastros realizados com sucesso!`,
+        });
+      })
+      .catch((error) => {
+        console.log("Message", error.message);
+        return response.status(500).json({
+          message: "Não foi possivel realizar os cadastros!",
+        });
+      });
   }
 );
 
