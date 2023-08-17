@@ -8,8 +8,8 @@ services:
     ports:
       - 5432:5432
     environment:
-      - POSTGRES_USER=pgcsv
-      - POSTGRES_PASSWORD=123456
-      - POSTGRES_DB=csv
+      - POSTGRES_USER=${POSTGRES_USER_DOCKER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD_DOCKER}
+      - POSTGRES_DB=${POSTGRES_DB_DOCKER}
     volumes:
       - ./data/csvdata:/var/lib/postgresql/data
