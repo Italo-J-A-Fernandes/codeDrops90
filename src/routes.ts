@@ -1,10 +1,11 @@
-import { Request, Response, Router, request } from "express";
+import { Request, Response, Router, request, response } from "express";
 import { Readable } from "stream";
 import { client } from "./database/client";
 import readLine from "readline";
 import multer from "multer";
 import { hash } from "bcrypt";
 import { v4 as uuidV4 } from "uuid";
+import fs from "fs";
 
 const multerConfig = multer();
 const router = Router();
@@ -41,9 +42,20 @@ interface License {
   updatedAt: Date;
 }
 
-interface UserLicense {
+interface Progress {
+  id: string;
+  level: number;
+  xp: number;
+  stars: number;
+  userId: string;
+  createdAt: Date;
+  updatedAt: Date;
+}
+
+interface UserRegister {
   user: User;
   license: License;
+  progress: Progress;
 }
 
 router.get("/", (request: Request, response: Response) => {
@@ -124,10 +136,10 @@ router.post(
       input: readableFile,
     });
 
-    const registers: UserLicense[] = [];
+    const registers: UserRegister[] = [];
 
     for await (let line of usersLine) {
-      const usersLineSplit = line.split(",");
+      const usersLineSplit = line.split(";");
 
       const id = uuidV4();
       const password = await hash("12345678", 15);
@@ -141,7 +153,7 @@ router.post(
 
       const user: User = {
         id: id,
-        email: usersLineSplit[0],
+        email: usersLineSplit[0].toLowerCase(),
         name: usersLineSplit[1],
         cpf: usersLineSplit[2],
         birthDate: birthDay,
@@ -164,6 +176,16 @@ router.post(
         updatedAt: new Date(),
       };
 
+      const progress: Progress = {
+        id: uuidV4(),
+        userId: id,
+        level: 0,
+        xp: 0,
+        stars: 0,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
       const userData = await client.user.create({
         data: { ...user },
       });
@@ -173,7 +195,15 @@ router.post(
         data: { ...license },
       });
 
-      registers.push({ user: userData, license: licenseData });
+      const progressData = await client.userProgress.create({
+        data: { ...progress },
+      });
+
+      registers.push({
+        user: userData,
+        license: licenseData,
+        progress: progressData,
+      });
     }
     response.json(registers);
   }
