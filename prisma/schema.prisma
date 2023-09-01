@@ -18,7 +18,7 @@ model Products {
 }
 
 model User {
-  id            String    @id @default(uuid())
+  id            String        @id @default(uuid())
   email         String
   name          String
   cpf           String
@@ -26,14 +26,15 @@ model User {
   phone         String
   avatarUrl     String?
   password      String
-  isActive      Boolean   @default(false)
-  isBlocked     Boolean   @default(false)
+  isActive      Boolean       @default(false)
+  isBlocked     Boolean       @default(false)
   refreshToken  String?
-  role          String    @default("user")
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  role          String        @default("user")
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
   institutionId String?
   license       License[]
+  UserProgress  UserProgress?
 
   @@index([isActive], type: Hash)
   @@index([role], type: Hash)
@@ -69,4 +70,16 @@ model Contract {
   updatedAt     DateTime @updatedAt
 
   license License[]
+}
+
+model UserProgress {
+  id        String   @id @default(uuid())
+  level     Int      @default(0)
+  xp        Int      @default(0)
+  stars     Int      @default(0)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  userId String @unique
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
